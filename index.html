@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Metro Parks Tacoma Park Siting Study</title>
+		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+		<script src="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js"></script>
+		<link href="https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css" rel="stylesheet" />
+		<script src=https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js></script>
+		<!-- Geocoder -->
+		<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.min.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.5.1/mapbox-gl-geocoder.css"
+			type="text/css"
+		/>
+		<!-- Promise polyfill script required to use Mapbox GL Geocoder in IE 11 -->
+		<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/es6-promise@4/dist/es6-promise.auto.min.js"></script>
+	<style>
+		body {
+			background-color: #D3D3D3;
+			font-family: Tahoma, sans-serif;
+			margin: 40px
+		}
+
+		h1 {
+			margin: 40px;
+			/* margin-bottom: 40px; */
+			text-align: center
+		}
+
+		h3 {
+			color: #0000FF
+		}
+
+		hr {
+			color: #0000FF;
+			margin-top: 40px;
+			margin-bottom: 40px
+		}
+
+		.map {
+			height: 70vh;
+			width: 50vw;
+			float: left;
+			margin-right: 40px;
+			margin-bottom: 40px;
+			border-color: #0000FF;
+			border-width: 2px;
+		}
+
+		.map-overlay {
+			position: absolute;
+			bottom: 5px;
+			right: 5px;
+			padding: 10px;
+			background: rgba(255, 255, 255, 0.8);
+			font-family: Tahoma, sans-serif;
+			overflow: auto;
+			border-radius: 3px;
+			z-index: 1;
+		}
+
+		.legend-key {
+			display: inline-block;
+			border-radius: 20%;
+			width: 10px;
+			height: 10px;
+			margin-right: 5px;
+		}
+		/* div {
+			padding: 10px;
+		} */
+
+		.clearfix::after {
+			content: "";
+			clear: both;
+			display: table;
+		}
+
+		*{
+		  box-sizing: border-box;
+		}
+
+		.img-container {
+		  float: left;
+		  width: 33.33%;
+		  padding: 5px;
+		}
+
+		.logo {
+			display: block;
+		  margin-left: auto;
+		  margin-right: auto;
+		  max-height:80px;
+		}
+
+		</style>
+	</head>
+
+	<body>
+	<style>
+
+	</style>
+			<!--Title and photo-->
+			<div class="clearfix">
+				<img src="images/Logos_UW_MPT.png" style="float:right; height:100px; width:auto; margin-left:20px">
+				<h1>Metro Parks Tacoma: Facility Siting Study</h1>
+			</div>
+			<h3>Purpose</h3>
+			<p style="margin-bottom:40px">This study is designed to identify potential locations for future parks, open spaces or community centers in Tacoma. It identifies gap areas that are outside of a 10-minute walk to existing Metro Parks facilities. These gap areas are further analyzed to find concentrations of low Equity Index scores and/or high population densities of young children and families. These areas would be ideal locations to prioritize Tacoma’s next park, community center or green space.</p>
+			<div class="clearfix">
+				<img src="images/PugetPark.jpg" alt="Woman walking a dog through Puget Stream Park" style="float:right; height:50vh; width:auto; margin-left:40px; margin-bottom:40px">
+				<h3>Background</h3>The city of Tacoma boasts nearly 3,000 acres of open spaces, parks and community centers that are managed by Metro Parks Tacoma. Numerous studies show access to these amenities is associated with a higher prevalence of physical activity. Furthermore, those who travel to parks on foot or bike, especially children and adolescents, are more active in the park setting than those arriving by other means. <br><br>The city of Tacoma, working with the Trust for Public Land, is endeavoring to provide a park or open space within a 10-minute walk of every citizen. Metro Parks Tacoma (MPT) teamed with the University of Washington Tacoma to determine which areas of the city fall short of this goal and to prioritize potential locations for new parks, open spaces and community centers.<br><br><h3>Assumptions and limitations</h3>•	Spatial extent for the study: The city of Tacoma plus a half-mile buffer.<br>•	“Facilities” are limited to Metro Parks Tacoma land including parks, playgrounds and community centers.<br>•	The study does not include paid facilities such as golf courses, museums or zoos.<br>•	The study does not include gardens, dog parks or other limited-service areas.<br>•	The study does not include playgrounds or green spaces that aren’t owned or maintained by Metro Parks Tacoma, such as school playgrounds.<br>•	Walking speed is assumed to be three miles per hour.<br>•	Populations are, on average, evenly spaced throughout U.S. Census block groups.
+			</div>
+			<hr>
+			<!--base map-->
+			<div class="clearfix">
+				<div id="map1" class="map">
+					<div class='map-overlay' id='legend1'><p style="text-align:center; margin:0"><i><b>Figure 1</b></i></div>
+				</div>
+				<h3>Step One: Identify the <i>gap areas</i></h3>Areas that are outside a 10-minute walk to any Metro Parks facilities are gap areas. Defining these areas was a key, first step in the process. 40 percent of Tacoma’s geography falls within gap areas.<br><br><b>Methodology:</b> Identifying gap areas first required mapping out the Metro Parks facilities and the territories they serve. ArcMap was used to create service areas that represented a 10-minute walk to any existing Metro Parks facility. The road network was extended outside Tacoma’s borders by one-half mile to reduce the edge effect and arterial routes (e.g. freeways) were classified as barriers. The results were exported to Mapbox Studio to create the base map, Figure 1.<br><br><b>Those areas not currently served by Metro Parks facilities are the gap areas (represented in gray) and they are the focus of this study.</b>
+
+			</div>
+			<hr>
+			<!--equity map-->
+			<div class="clearfix">
+				<div id="map2" class="map">
+					<div class='map-overlay' id='legend2'><p style="text-align:center; margin:0"><i><b>Figure 2</b></i></div>
+				</div>
+				<h3>Step Two: Apply the Tacoma Equity Index</h3>The Equity Index is a form of opportunity mapping that highlights obstacles connected to upward mobility. It is a primary tool for city staff and decision makers to address access to opportunity for all Tacoma residents. Created by the Kirwan Institute for the Study of Race and Ethnicity, the Equity Index aggregates 20 indicators within four categories: accessibility, economy, education and livability.<br><br>The Overall Equity Index rates opportunity into categories ranging from very high to very low. Very high equity represents locations that have access to better opportunities to succeed. The data indicators include high performing schools, a safe environment, access to adequate transportation, safe neighborhoods and sustainable employment. In contrast, low equity areas have more obstacles and barriers. These communities have limited access to institutional or societal investments.<br><br><b>Methodology:</b> ArcMap was used to conduct hot spot analysis on Tacoma’s overall Equity Index scores for the gap areas. This tool identified concentrations of high and low scores on the map. The results were exported to a Web mapping language and applied to the Mapbox base layer to create Figure 2.<br><br><b>Hot spot analysis showed two clusters of very high Equity Index scores in North End and Northeast Tacoma (labeled in red). This analysis also illuminated a cluster of very low Equity Index scores in South End and South Tacoma (shown in blue).</b>
+			</div>
+			<hr>
+			<!--populations map-->
+			<div class="clearfix">
+				<div id="map3" class="map">
+					<div class='map-overlay' id='legend3'><p style="text-align:center; margin:0"><i><b>Figure 3</b></i></div>
+				</div>
+				<h3>Step Three: Identify high population density areas</h3>Population density, or residents per square mile, is an important factor in maximizing limited resources. More people can be served when first addressing areas with higher population densities. Cluster analysis of data from the U.S. Census Bureau was key to identifying population density in two categories: total population and youth population (i.e. children and adolescents under 18 years old). <br><br><b>Methodology:</b> 2018 Census data for populations in Census block groups encompassing Tacoma was the most current available and coincided with the 2018 Equity Index. Even though they do not line up with the city boundaries, block groups were kept whole to enable accurate density calculations. (Note: for visual clarity, the final map in Figure 3 was clipped to Tacoma’s borders after completing analyses.) <br><br>Two rounds of ArcMap hot spot analyses of block groups in the gap areas showed areas of high density for the total population and the youth population. Results from both analyses were combined and exported to create Figure 3.<br><br><b>A high total population density cluster appeared in the North End (shown in red), which includes the University of Puget Sound campus. Meanwhile, a high youth population density cluster appeared in the South End (also shown in red), which includes the Helen B. Stafford Elementary School.</b>
+			</div>
+			<hr>
+			<!--analysis chart-->
+			<div class="clearfix">
+				<div id="wrapper">
+				<h3>Step Four: Analyze specific populations by Equity Index</h3>
+				<p>The study, so far, had defined gap areas, identified clusters of high and low Equity Index areas and identified hot spots of total and youth population density. The final step involved analyzing these data together. That required looking at specific populations within parts of Census block groups within the gap areas. One-third of Tacoma’s total population, or 71,209 people, live in the gap areas. This includes 15,154 youths.</p>
+				<p><b>Methodology:</b> Clipping block groups to conform with the Tacoma city border and the gap areas required averaging the total and youth populations across the area of each block group. For example, if 30 percent of a block group’s geographic area fell within Tacoma, then 30 percent of the block group’s population was assumed to reside within Tacoma. Using this method to clip block groups to the Tacoma city boundary was accurate to within one percent of the U.S. Census Bureau’s published total. It was reasonable to assume further clipping of block groups to the gap areas was similarly accurate.</p>
+				<p style="margin-bottom:40px">When population counts are correlated to the five Equity Index categories (very high to very low), each category should be expected to have similar numbers of people. However, there was a slightly elevated percentage of residents living in very low Equity Index areas compared to the average. This elevated number was exacerbated in the gap areas. While 34 percent of the total population lives in the gap areas, 40 percent of the total very low Equity Index population resides there. That number jumps significantly for the youth population. While 34 percent of the youth population lives in the gap areas, 45 percent of the youth very low Equity Index population resides there. </p>
+				<h3 style="text-align:center; margin-bottom:0">Youth Populations in the Gap Areas by Equity Index</h3>
+				<canvas id="myChart" height="60"></canvas>
+				<p style="margin-top:40px"><b>Even more telling, one third of all the youth population living in the gap areas come from the very low Equity Index score.</b> This is more than twice as many youths in the very high, high or moderate Equity Index scores. Specifically, an average of 3,031 youths from each Equity Index category live in the gap areas. However, 5,214 youths from the very low Equity Index category live in the gap areas.</p>
+				</div>
+	    </div>
+			<hr>
+			<!--recommendations map-->
+			<div class="clearfix">
+				<div id="map4" class="map">
+					<div class='map-overlay' id='legend4'><p style="text-align:center; margin:0"><i><b>Figure 4</b></i></div>
+				</div>
+				<h3>Conclusion</h3>Two zones within the gap areas make good candidates for Tacoma’s next park or community center. <br><br> 	A new Metro Parks facility in the North End would serve a high total population cluster (denoted in red on Figure 4). It coincides with very high Equity Index scores (shown in red on Figure 2). <br><br>A new Metro Parks Facility in the South End would benefit a high youth population cluster (shown in blue on Figure 4). This area coincides with very low Equity Index scores (shown in blue on Figure 2). There were no parks or open lands south of that location (i.e. outside Tacoma) to serve this population group. <b>This option most closely aligns with the purpose of this study.</b>
+			</div>
+			<hr>
+			<h3 style="margin-bottom:0">Special Thank You</h3>
+			<p style="margin-top:0;">Renee Opatz of <a href="https://www.metroparkstacoma.org/" target="_blank">Metro Parks Tacoma</a>; Dr. Emma Slager and Dr. Matthew Kelley of the <a href="https://www.tacoma.uw.edu/" target="_blank">University of Washington Tacoma</a>
+			<h3 style="margin-bottom:0">Geospatial Data</h3>
+			<p style="margin-top:0; margin-bottom:40px"><a href="https://www.metroparkstacoma.org/" target="_blank">Metro Parks Tacoma</a>, <a href="https://geohub.cityoftacoma.org/" target="_blank">City of Tacoma GeoHub Portal</a>, <a href="https://www.co.pierce.wa.us/491/Maps-Data" target="_blank">Pierce County Open Geospatial Data Portal</a>, <a href="https://geo.wa.gov/" target="_blank">Washington Geospatial Open Data</a>, <a href="https://data.census.gov/cedsci/advanced" target="_blank">U.S. Census Bureau</a></p>
+
+			<div class="clearfix">
+			  <div class="img-container">
+			  <img src="images/UWT_logo_gold.jpeg" alt="UWT Logo" class="logo">
+			  </div>
+			  <div class="img-container">
+			  <img src="images/MPT_Logo_small.png" alt="UWT Logo" class="logo">
+			  </div>
+			  <div class="img-container">
+			  <img src="images/US-Census-Bureau-Logo.png" alt="UWT Logo" class="logo">
+			  </div>
+			</div>
+
+		<!-- JS code for the map goes here -->
+		<script>
+			//copy your access token here
+			mapboxgl.accessToken = 'pk.eyJ1Ijoic2FzY2h1IiwiYSI6ImNraTQwdWpzcTBwcHcycW1pYXk2ZTVmcjMifQ.5yy1jBAaQbljA_srHfYajw';
+			var bounds = [
+				[-122.8, 47.1],
+				[-122.1, 47.4]
+			];
+
+			//Base Map
+			var map1 = new mapboxgl.Map({
+			  container: 'map1', // HTML container id
+			  style: 'mapbox://styles/saschu/cki6lwfbu16xn19s0m7e1tx93', // style URL
+				center: [-122.45, 47.245],
+				zoom: 10.5,
+				attributionControl: false,
+				maxBounds: bounds
+			});
+			map1.addControl(new mapboxgl.AttributionControl(), 'top-left');
+			// Legend
+			map1.on('load', function() {
+				var layers = ['Gap Area', '10-Min Walk', 'MPT Facility'];
+				var colors = ['#bfbfbf', '#8fbc8f', '#6b8e23'];
+				for (i = 0; i < layers.length; i++) {
+				var layer = layers[i];
+				var color = colors[i];
+				var item = document.createElement('div');
+				var key = document.createElement('span');
+				key.className = 'legend-key';
+				key.style.backgroundColor = color;
+				var value = document.createElement('span');
+				value.innerHTML = layer;
+				item.appendChild(key);
+				item.appendChild(value);
+				legend1.appendChild(item);
+				}
+			});
+			//geocoder with a bounding box
+			map1.addControl(
+				new MapboxGeocoder({
+					accessToken: mapboxgl.accessToken,
+					bbox: [-122.58, 47.15, -122.34, 47.33],
+					mapboxgl: mapboxgl
+				})
+			);
+
+			//Equity Map
+			var map2 = new mapboxgl.Map({
+			  container: 'map2', // HTML container id
+			  style: 'mapbox://styles/saschu/cki6lwfbu16xn19s0m7e1tx93', // style URL
+				center: [-122.45, 47.245],
+				zoom: 10.5,
+				attributionControl: false,
+				maxBounds: bounds
+			});
+			map2.addControl(new mapboxgl.AttributionControl(), 'top-left');
+			//on map load, run function to load the geojson
+			map2.on('load', function () {
+				var layers = map2.getStyle().layers;
+				// Find the index of the first symbol layer in the map style to put this layer below the base map
+				var firstSymbolId;
+				for (var i = 0; i < layers.length; i++) {
+					if (layers[i].type === 'symbol') {
+					firstSymbolId = layers[i].id;
+					break;
+					}
+				}
+				map2.addSource('equity', {
+							"type": "geojson",
+							"data": "data/HS_Equity.json"
+				});
+					map2.addLayer({
+						"id":"EquityHS",
+						"type":"fill",
+						"source":"equity",
+						"type":"fill",
+						"layout": {},//part of putting below base map
+						"paint":{
+							"fill-color": [
+								"interpolate",
+								["linear"],
+								["get", "Gi_Bin"],
+								-3,
+								"#4575b5",
+								-2,
+								"#859eba",
+								-1,
+								"#bfccbf",
+								0,
+								"#b4b4b4",
+								1,
+								"#faba85",
+								2,
+								"#ed7552",
+								3,
+								"#d62c26"
+							],
+							"fill-opacity": 1
+						}
+					},
+					firstSymbolId//puts this layer below the base map
+					);
+			});
+			// Legend
+			map2.on('load', function() {
+				var layers = ['High Equity', 'Low Equity'];
+				var colors = ['#d62c26', '#4575b5'];
+				for (i = 0; i < layers.length; i++) {
+				var layer = layers[i];
+				var color = colors[i];
+				var item = document.createElement('div');
+				var key = document.createElement('span');
+				key.className = 'legend-key';
+				key.style.backgroundColor = color;
+				var value = document.createElement('span');
+				value.innerHTML = layer;
+				item.appendChild(key);
+				item.appendChild(value);
+				legend2.appendChild(item);
+				}
+			});
+			//geocoder with a bounding box
+			map2.addControl(
+				new MapboxGeocoder({
+					accessToken: mapboxgl.accessToken,
+					bbox: [-122.58, 47.15, -122.34, 47.33],
+					mapboxgl: mapboxgl
+				})
+			);
+
+			//Populations Map
+			var map3 = new mapboxgl.Map({
+			  container: 'map3', // HTML container id
+			  style: 'mapbox://styles/saschu/cki6lwfbu16xn19s0m7e1tx93', // style URL
+				center: [-122.45, 47.245],
+				zoom: 10.5,
+				attributionControl: false,
+				maxBounds: bounds
+				});
+				map3.addControl(new mapboxgl.AttributionControl(), 'top-left');
+			//on map load, run function to load the geojson
+			map3.on('load', function () {
+				var layers = map3.getStyle().layers;
+				// Find the index of the first symbol layer in the map style to put this layer below the base map
+				var firstSymbolId;
+				for (var i = 0; i < layers.length; i++) {
+					if (layers[i].type === 'symbol') {
+					firstSymbolId = layers[i].id;
+					break;
+					}
+				}
+				map3.addSource('Populations', {
+							"type": "geojson",
+							"data": "data/HS_Populations.json"
+				});
+					map3.addLayer({
+						"id":"PopulationsHS",
+						"type":"fill",
+						"source":"Populations",
+						"type":"fill",
+						"layout": {},//part of putting below base map
+						"paint":{
+							"fill-color": [
+								"interpolate",
+								["linear"],
+								["get", "Gi_Bin"],
+								-3,
+								"#4575b5",
+								-2,
+								"#859eba",
+								-1,
+								"#bfccbf",
+								0,
+								"#b4b4b4",
+								1,
+								"#faba85",
+								2,
+								"#ed7552",
+								3,
+								"#d62c26"
+							],
+							"fill-opacity": 1
+						}
+					},
+					firstSymbolId//puts this layer below the base map
+					);
+			});
+			// Legend
+			map3.on('load', function() {
+				var layers = ['High Population Density', 'Low Population Density'];
+				var colors = ['#d62c26', '#4575b5'];
+				for (i = 0; i < layers.length; i++) {
+				var layer = layers[i];
+				var color = colors[i];
+				var item = document.createElement('div');
+				var key = document.createElement('span');
+				key.className = 'legend-key';
+				key.style.backgroundColor = color;
+				var value = document.createElement('span');
+				value.innerHTML = layer;
+				item.appendChild(key);
+				item.appendChild(value);
+				legend3.appendChild(item);
+				}
+			});
+			//geocoder with a bounding box
+			map3.addControl(
+				new MapboxGeocoder({
+					accessToken: mapboxgl.accessToken,
+					bbox: [-122.58, 47.15, -122.34, 47.33],
+					mapboxgl: mapboxgl
+				})
+			);
+
+			//Recommendations Map
+			var map4 = new mapboxgl.Map({
+			  container: 'map4', // HTML container id
+			  style: 'mapbox://styles/saschu/cki6lwfbu16xn19s0m7e1tx93', // style URL
+				center: [-122.45, 47.245],
+				zoom: 10.5,
+				attributionControl: false,
+				maxBounds: bounds
+			});
+			map4.addControl(new mapboxgl.AttributionControl(), 'top-left');
+			//on map load, run function to load the geojson
+			map4.on('load', function () {
+				var layers = map4.getStyle().layers;
+				// Find the index of the first symbol layer in the map style to put this layer below the base map
+				var firstSymbolId;
+				for (var i = 0; i < layers.length; i++) {
+					if (layers[i].type === 'symbol') {
+					firstSymbolId = layers[i].id;
+					break;
+					}
+				}
+				map4.addSource('recoTotal', {
+							"type": "geojson",
+							"data": "data/Recommend_TotalPop.json"
+				});
+					map4.addLayer({
+						"id":"recoTotalPop",
+						"type":"fill",
+						"source":"recoTotal",
+						"type":"fill",
+						"layout": {},//part of putting below base map
+						"paint":{
+							"fill-color": "#d62c26",
+							"fill-opacity": 1
+						}
+					},
+					firstSymbolId//puts this layer below the base map
+					);
+			});
+
+			map4.on('load', function () {
+				var layers = map4.getStyle().layers;
+				// Find the index of the first symbol layer in the map style to put this layer below the base map
+				var firstSymbolId;
+				for (var i = 0; i < layers.length; i++) {
+					if (layers[i].type === 'symbol') {
+					firstSymbolId = layers[i].id;
+					break;
+					}
+				}
+				map4.addSource('recoYouth', {
+							"type": "geojson",
+							"data": "data/Recommend_YouthPop.json"
+				});
+					map4.addLayer({
+						"id":"recoYouthPop",
+						"type":"fill",
+						"source":"recoYouth",
+						"type":"fill",
+						"layout": {},//part of putting below base map
+						"paint":{
+							"fill-color": "#4575b5",
+							"fill-opacity": 1
+						}
+					},
+					firstSymbolId//puts this layer below the base map
+					);
+			});
+			// Legend
+			map4.on('load', function() {
+				var layers = ['Total Population', 'Youth Population'];
+				var colors = ['#d62c26', '#4575b5'];
+				for (i = 0; i < layers.length; i++) {
+				var layer = layers[i];
+				var color = colors[i];
+				var item = document.createElement('div');
+				var key = document.createElement('span');
+				key.className = 'legend-key';
+				key.style.backgroundColor = color;
+				var value = document.createElement('span');
+				value.innerHTML = layer;
+				item.appendChild(key);
+				item.appendChild(value);
+				legend4.appendChild(item);
+				}
+			});
+			//geocoder with a bounding box
+			map4.addControl(
+				new MapboxGeocoder({
+					accessToken: mapboxgl.accessToken,
+					bbox: [-122.58, 47.15, -122.34, 47.33],
+					mapboxgl: mapboxgl
+				})
+			);
+
+			//Chart
+			var equityClasses = ["Very High", "High", "Moderate", "Low", "Very Low"];
+      var typeNums = [2291, 2560, 2167, 2922, 5214];
+
+      var ctx = document.getElementById("myChart");
+      var myChart = new Chart(ctx, {
+        type: 'bar',
+          data: {
+            labels: equityClasses,
+            datasets: [
+              {
+                label: "Youth Population",
+                backgroundColor: "#3e95cd",
+                data: typeNums
+              }
+            ]
+          },
+          options: {
+            legend: {display: false },
+            }
+          });
+
+		</script>
+	</body>
+</html>
